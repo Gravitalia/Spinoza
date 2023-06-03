@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"os"
-	"time"
 
 	"github.com/gravitalia/spinoza/helpers"
 	"github.com/gravitalia/spinoza/proto"
@@ -20,12 +18,10 @@ type server struct {
 }
 
 func (s *server) Upload(ctx context.Context, in *proto.UploadRequest) (*proto.UploadReply, error) {
-	start := time.Now().UnixMilli()
 	img, err := helpers.Compress(in.GetData(), in.GetWidth(), in.GetHeight())
 	if err != nil {
 		return &proto.UploadReply{Message: err.Error(), Error: true}, nil
 	}
-	fmt.Println(time.Now().UnixMilli() - start)
 
 	id, err := uploader.UploadOnCloudinary(img)
 	if err != nil {
@@ -48,7 +44,7 @@ func main() {
 	log.Printf("Listening on port :%s\n", os.Getenv("PORT"))
 
 	var opts []grpc.ServerOption
-	maxMsgSize := 40 * 1024 * 1024
+	maxMsgSize := 20 * 1024 * 1024
 	opts = append(opts, grpc.MaxRecvMsgSize(maxMsgSize), grpc.MaxSendMsgSize(maxMsgSize))
 
 	grpcServer := grpc.NewServer(opts...)
