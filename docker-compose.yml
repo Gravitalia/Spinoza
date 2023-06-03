@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  autha:
+    image: gravitalia/spinoza:latest
+    container_name: spinoza
+    restart: always
+    expose:
+      - '50051:50051'
+    env_file:
+      - .env
