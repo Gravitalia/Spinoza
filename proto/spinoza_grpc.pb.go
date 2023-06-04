@@ -18,88 +18,88 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// SpinozaServiceClient is the client API for SpinozaService service.
+// SpinozaClient is the client API for Spinoza service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SpinozaServiceClient interface {
+type SpinozaClient interface {
 	// Compress and then upload the image to the CDN provider
 	Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadReply, error)
 }
 
-type spinozaServiceClient struct {
+type spinozaClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSpinozaServiceClient(cc grpc.ClientConnInterface) SpinozaServiceClient {
-	return &spinozaServiceClient{cc}
+func NewSpinozaClient(cc grpc.ClientConnInterface) SpinozaClient {
+	return &spinozaClient{cc}
 }
 
-func (c *spinozaServiceClient) Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadReply, error) {
+func (c *spinozaClient) Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadReply, error) {
 	out := new(UploadReply)
-	err := c.cc.Invoke(ctx, "/spinoza.SpinozaService/Upload", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/spinoza.Spinoza/Upload", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// SpinozaServiceServer is the server API for SpinozaService service.
-// All implementations must embed UnimplementedSpinozaServiceServer
+// SpinozaServer is the server API for Spinoza service.
+// All implementations must embed UnimplementedSpinozaServer
 // for forward compatibility
-type SpinozaServiceServer interface {
+type SpinozaServer interface {
 	// Compress and then upload the image to the CDN provider
 	Upload(context.Context, *UploadRequest) (*UploadReply, error)
-	mustEmbedUnimplementedSpinozaServiceServer()
+	mustEmbedUnimplementedSpinozaServer()
 }
 
-// UnimplementedSpinozaServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedSpinozaServiceServer struct {
+// UnimplementedSpinozaServer must be embedded to have forward compatible implementations.
+type UnimplementedSpinozaServer struct {
 }
 
-func (UnimplementedSpinozaServiceServer) Upload(context.Context, *UploadRequest) (*UploadReply, error) {
+func (UnimplementedSpinozaServer) Upload(context.Context, *UploadRequest) (*UploadReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
-func (UnimplementedSpinozaServiceServer) mustEmbedUnimplementedSpinozaServiceServer() {}
+func (UnimplementedSpinozaServer) mustEmbedUnimplementedSpinozaServer() {}
 
-// UnsafeSpinozaServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SpinozaServiceServer will
+// UnsafeSpinozaServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SpinozaServer will
 // result in compilation errors.
-type UnsafeSpinozaServiceServer interface {
-	mustEmbedUnimplementedSpinozaServiceServer()
+type UnsafeSpinozaServer interface {
+	mustEmbedUnimplementedSpinozaServer()
 }
 
-func RegisterSpinozaServiceServer(s grpc.ServiceRegistrar, srv SpinozaServiceServer) {
-	s.RegisterService(&SpinozaService_ServiceDesc, srv)
+func RegisterSpinozaServer(s grpc.ServiceRegistrar, srv SpinozaServer) {
+	s.RegisterService(&Spinoza_ServiceDesc, srv)
 }
 
-func _SpinozaService_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Spinoza_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SpinozaServiceServer).Upload(ctx, in)
+		return srv.(SpinozaServer).Upload(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/spinoza.SpinozaService/Upload",
+		FullMethod: "/spinoza.Spinoza/Upload",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SpinozaServiceServer).Upload(ctx, req.(*UploadRequest))
+		return srv.(SpinozaServer).Upload(ctx, req.(*UploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// SpinozaService_ServiceDesc is the grpc.ServiceDesc for SpinozaService service.
+// Spinoza_ServiceDesc is the grpc.ServiceDesc for Spinoza service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var SpinozaService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "spinoza.SpinozaService",
-	HandlerType: (*SpinozaServiceServer)(nil),
+var Spinoza_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "spinoza.Spinoza",
+	HandlerType: (*SpinozaServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Upload",
-			Handler:    _SpinozaService_Upload_Handler,
+			Handler:    _Spinoza_Upload_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
