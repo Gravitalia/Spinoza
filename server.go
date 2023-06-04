@@ -14,7 +14,7 @@ import (
 )
 
 type server struct {
-	proto.UnimplementedSpinozaServiceServer
+	proto.UnimplementedSpinozaServer
 }
 
 func (s *server) Upload(ctx context.Context, in *proto.UploadRequest) (*proto.UploadReply, error) {
@@ -48,6 +48,6 @@ func main() {
 	opts = append(opts, grpc.MaxRecvMsgSize(maxMsgSize), grpc.MaxSendMsgSize(maxMsgSize))
 
 	grpcServer := grpc.NewServer(opts...)
-	proto.RegisterSpinozaServiceServer(grpcServer, &server{})
+	proto.RegisterSpinozaServer(grpcServer, &server{})
 	grpcServer.Serve(lis)
 }
