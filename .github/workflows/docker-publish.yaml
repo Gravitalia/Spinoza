@@ -20,6 +20,6 @@ jobs:
         
     - name: Build the hello-docker Docker image
       run: |
-            docker build . --tag ghcr.io/Gravitalia/spinoza:latest
-            docker run ghcr.io/Gravitalia/spinoza:latest
-            docker push ghcr.io/Gravitalia/spinoza:latest
+            docker build . --tag ghcr.io/gravitalia/spinoza:latest
+            docker run ghcr.io/gravitalia/spinoza:latest
+            docker push ghcr.io/gravitalia/spinoza:latest
