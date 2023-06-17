@@ -1,14 +1,18 @@
 package helpers
 
 import (
+	"bytes"
+	"image/jpeg"
 	"os"
 	"strconv"
 
+	"github.com/chai2010/webp"
 	"github.com/discord/lilliput"
 )
 
 func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	var outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
+	var outputHeight, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_HEIGHT"))
 
 	decoder, err := lilliput.NewDecoder(image)
 	// this error reflects very basic checks,
@@ -35,33 +39,30 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 
 	if width != 0 {
 		outputWidth = int(width)
-	} else if outputWidth > header.Width() {
-		outputWidth = header.Width()
-	}
-
-	resizeMethod := lilliput.ImageOpsResize
-	if outputWidth == header.Width() {
-		resizeMethod = lilliput.ImageOpsNoResize
-	}
-
-	// Calcul what height it needs to be
-	outputHeight := float64(outputWidth) / float64(header.Width()) * float64(header.Height())
-	if outputHeight == 0 {
-		defaultOutputHeight, _ := strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_HEIGHT"))
-		outputHeight = float64(defaultOutputHeight)
 	}
 
 	if height != 0 {
-		outputHeight = float64(height)
+		outputHeight = int(height)
+	}
+
+	var outputPixels = outputWidth * outputHeight
+
+	// Calcul new width and height
+	if header.Width()*header.Height() > outputPixels {
+		outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
+		outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
+	} else {
+		outputWidth = header.Width()
+		outputHeight = header.Height()
 	}
 
 	opts := &lilliput.ImageOptions{
-		FileType:             ".webp",
+		FileType:             ".jpeg",
 		Width:                outputWidth,
 		Height:               int(outputHeight),
-		ResizeMethod:         resizeMethod,
+		ResizeMethod:         lilliput.ImageOpsResize,
 		NormalizeOrientation: true,
-		EncodeOptions:        map[int]int{lilliput.WebpQuality: 100},
+		EncodeOptions:        map[int]int{lilliput.JpegQuality: 90, lilliput.JpegProgressive: 100},
 	}
 
 	// resize and transcode image
@@ -70,5 +71,20 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	return outputImg, nil
+	resizedImage, err := jpeg.Decode(bytes.NewReader(outputImg))
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert JPEG to WebP
+	webpImg := new(bytes.Buffer)
+	err = webp.Encode(webpImg, resizedImage, &webp.Options{Lossless: false, Quality: 90})
+	if err != nil {
+		return nil, err
+	}
+
+	// Read the encoded WebP image
+	encodedImg := webpImg.Bytes()
+
+	return encodedImg, nil
 }
