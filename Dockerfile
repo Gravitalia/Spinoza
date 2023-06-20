@@ -5,9 +5,10 @@ COPY . /app
 WORKDIR /app
 
 RUN apk update \
- && apk add openssl-dev pkgconf protobuf-dev musl-dev build-base g++
+ && apk add openssl-dev pkgconf protobuf-dev musl-dev build-base g++ git
+RUN go mod download
  
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o spinoza
+RUN CGO_ENABLED=1 GOOS=linux go build -o spinoza
 
 FROM alpine:3.18 AS runtime
 
