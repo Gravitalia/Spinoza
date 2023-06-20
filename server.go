@@ -32,9 +32,8 @@ func (s *server) Upload(ctx context.Context, in *proto.UploadRequest) (*proto.Up
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// Load .env file
+	godotenv.Load()
 
 	lis, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
