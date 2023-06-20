@@ -5,7 +5,7 @@ COPY . /app
 WORKDIR /app
 
 RUN apk update \
- && apk add openssl-dev pkgconf protobuf-dev
+ && apk add openssl-dev pkgconf protobuf-dev musl-dev build-base g++
  
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o spinoza
 
