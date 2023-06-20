@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine3.18 AS build
+FROM golang:1.20 AS build
 
 RUN mkdir /app
 COPY . /app
