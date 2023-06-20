@@ -4,7 +4,7 @@ RUN mkdir /app
 COPY . /app
 WORKDIR /app
 
-RUN apk update && apk add --no-cache gcc musl-dev openssl-dev pkgconf protobuf-dev
+RUN apk update && apk add --no-cache gcc musl-dev openssl-dev pkgconf protobuf-dev g++
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o spinoza
 
 FROM alpine:3.18 AS runtime
