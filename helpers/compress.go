@@ -13,6 +13,7 @@ import (
 func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	var outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
 	var outputHeight, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_HEIGHT"))
+	var outputPixels = outputWidth * outputHeight
 
 	decoder, err := lilliput.NewDecoder(image)
 	// this error reflects very basic checks,
@@ -37,6 +38,16 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	// create a buffer to store the output image, 10MB in this case
 	outputImg := make([]byte, 10*1024*1024)
 
+	// Calcul new width and height
+	if header.Width()*header.Height() > outputPixels {
+		outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
+		outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
+	} else {
+		outputWidth = header.Width()
+		outputHeight = header.Height()
+	}
+
+	// use custom width and height
 	if width != 0 {
 		outputWidth = int(width)
 	}
@@ -45,25 +56,10 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 		outputHeight = int(height)
 	}
 
-	var outputPixels = outputWidth * outputHeight
-
-	// Calcul new width and height
-	if header.Width()*header.Height() > outputPixels {
-		if width == 0 {
-			outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
-		}
-		if height == 0 {
-			outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
-		}
-	} else {
-		outputWidth = header.Width()
-		outputHeight = header.Height()
-	}
-
 	opts := &lilliput.ImageOptions{
 		FileType:             ".jpeg",
 		Width:                outputWidth,
-		Height:               int(outputHeight),
+		Height:               outputHeight,
 		ResizeMethod:         lilliput.ImageOpsResize,
 		NormalizeOrientation: true,
 		EncodeOptions:        map[int]int{lilliput.JpegQuality: 90, lilliput.JpegProgressive: 100},
