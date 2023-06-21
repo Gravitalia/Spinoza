@@ -48,11 +48,17 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	}
 
 	// use custom width and height
-	if width != 0 {
+	if width != 0 && height == 0 {
+		outputWidth = int(width)
+		outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
+	} else if width != 0 {
 		outputWidth = int(width)
 	}
 
-	if height != 0 {
+	if height != 0 && width == 0 {
+		outputHeight = int(height)
+		outputWidth = int(float64(outputHeight) / float64(header.Height()) * float64(header.Width()))
+	} else if height != 0 {
 		outputHeight = int(height)
 	}
 
