@@ -49,8 +49,12 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 
 	// Calcul new width and height
 	if header.Width()*header.Height() > outputPixels {
-		outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
-		outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
+		if width == 0 {
+			outputWidth, _ = strconv.Atoi(os.Getenv("DEFAULT_OUTPUT_WIDTH"))
+		}
+		if height == 0 {
+			outputHeight = int(float64(outputWidth) / float64(header.Width()) * float64(header.Height()))
+		}
 	} else {
 		outputWidth = header.Width()
 		outputHeight = header.Height()
