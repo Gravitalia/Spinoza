@@ -78,7 +78,7 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	}
 
 	// if resize is bigger than image, return image
-	if outputImg.len() >= image.len() {
+	if len(outputImg) >= len(image) {
 		outputImg = image
 	}
 
