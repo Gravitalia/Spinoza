@@ -77,6 +77,11 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 		return []byte{}, err
 	}
 
+	// if resize is bigger than image, return image
+	if outputImg.len() >= image.len() {
+		outputImg = image
+	}
+
 	resizedImage, err := jpeg.Decode(bytes.NewReader(outputImg))
 	if err != nil {
 		return nil, err
