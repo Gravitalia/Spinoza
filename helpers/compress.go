@@ -77,11 +77,6 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	// if resize is bigger than image, return image
-	if len(outputImg) >= len(image) {
-		outputImg = image
-	}
-
 	resizedImage, err := jpeg.Decode(bytes.NewReader(outputImg))
 	if err != nil {
 		return nil, err
@@ -96,6 +91,19 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 
 	// Read the encoded WebP image
 	encodedImg := webpImg.Bytes()
+
+	// if resize is bigger than image, return image
+	imgType := decoder.Description()
+	if len(encodedImg) >= len(image) && func() bool {
+		for _, v := range []string{"PNG", "WEBP", "JPEG"} {
+			if v == imgType {
+				return false
+			}
+		}
+		return true
+	}() {
+		encodedImg = image
+	}
 
 	return encodedImg, nil
 }
