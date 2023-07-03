@@ -8,7 +8,7 @@ require (
 	github.com/discord/lilliput v0.0.0-20230417184018-5787bc9f933d
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/grpc v1.56.1
-	google.golang.org/protobuf v1.30.0
+	google.golang.org/protobuf v1.31.0
 )
 
 require (
