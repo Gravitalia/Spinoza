@@ -17,23 +17,33 @@ type server struct {
 	proto.UnimplementedSpinozaServer
 }
 
-func (s *server) Upload(ctx context.Context, in *proto.UploadRequest) (*proto.UploadReply, error) {
+func (s *server) Upload(ctx context.Context, in *proto.UploadRequest) (*proto.BasicReponse, error) {
 	img, err := helpers.Compress(in.GetData(), in.GetWidth(), in.GetHeight())
 	if err != nil {
-		return &proto.UploadReply{Message: err.Error(), Error: true}, nil
+		return &proto.BasicReponse{Message: err.Error(), Error: true}, nil
 	}
 
 	id, err := uploader.UploadOnCloudinary(img)
 	if err != nil {
-		return &proto.UploadReply{Message: "Error while uploading file", Error: true}, nil
+		return &proto.BasicReponse{Message: "Error while uploading file", Error: true}, nil
 	}
 
-	return &proto.UploadReply{Message: id, Error: false}, nil
+	return &proto.BasicReponse{Message: id, Error: false}, nil
+}
+
+func (s *server) Delete(ctx context.Context, in *proto.DeleteRequest) (*proto.BasicReponse, error) {
+	id, err := uploader.DeleteOnCloudinary(in.Hash)
+	if err != nil {
+		return &proto.BasicReponse{Message: "Error while uploading file", Error: true}, nil
+	}
+
+	return &proto.BasicReponse{Message: id, Error: false}, nil
 }
 
 func main() {
-	// Load .env file
-	godotenv.Load()
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	lis, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
