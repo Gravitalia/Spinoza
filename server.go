@@ -41,9 +41,7 @@ func (s *server) Delete(ctx context.Context, in *proto.DeleteRequest) (*proto.Ba
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	godotenv.Load()
 
 	lis, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
