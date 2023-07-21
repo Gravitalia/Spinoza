@@ -3,6 +3,7 @@ package helpers
 import (
 	"bytes"
 	"image/jpeg"
+	"log"
 	"os"
 	"strconv"
 
@@ -19,6 +20,7 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	// this error reflects very basic checks,
 	// mostly just for the magic bytes of the file to match known image formats
 	if err != nil {
+		log.Printf("(Compress) Cannot decode image: %v", err)
 		return []byte{}, err
 	}
 	defer decoder.Close()
@@ -27,6 +29,7 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	// this error is much more comprehensive and reflects
 	// format errors
 	if err != nil {
+		log.Printf("(Compress) Cannot decode header: %v", err)
 		return []byte{}, err
 	}
 
@@ -74,6 +77,7 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	// resize and transcode image
 	outputImg, err = ops.Transform(decoder, opts, outputImg)
 	if err != nil {
+		log.Printf("(Compress) Cannot transform image: %v", err)
 		return []byte{}, err
 	}
 
@@ -86,6 +90,7 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	webpImg := new(bytes.Buffer)
 	err = webp.Encode(webpImg, resizedImage, &webp.Options{Lossless: false, Quality: 90})
 	if err != nil {
+		log.Printf("(Compress) Cannot encode image in WebP: %v", err)
 		return nil, err
 	}
 
