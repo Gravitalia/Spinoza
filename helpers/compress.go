@@ -94,15 +94,10 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 
 	// if resize is bigger than image, return image
 	imgType := decoder.Description()
-	if len(encodedImg) >= len(image) && func() bool {
-		for _, v := range []string{"PNG", "WEBP", "JPEG"} {
-			if v == imgType {
-				return true
-			}
+	if imgType == "PNG" || imgType == "WEBP" || imgType == "JPEG" {
+		if len(encodedImg) >= len(image) {
+			encodedImg = image
 		}
-		return false
-	}() {
-		encodedImg = image
 	}
 
 	return encodedImg, nil
