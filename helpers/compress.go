@@ -97,10 +97,10 @@ func Compress(image []byte, width int32, height int32) ([]byte, error) {
 	if len(encodedImg) >= len(image) && func() bool {
 		for _, v := range []string{"PNG", "WEBP", "JPEG"} {
 			if v == imgType {
-				return false
+				return true
 			}
 		}
-		return true
+		return false
 	}() {
 		encodedImg = image
 	}
